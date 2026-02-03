@@ -146,7 +146,6 @@ void blood::degrade (float time) {
         k = -log(0.5) / halfLife;
     }
     currentDosage = initialDosage * pow(euler, (-k*time)); //Q = Q_0 * e^(-K * time)
-    std::cout << "\ntest: " << currentDosage << std::endl;
     concentration = currentDosage / weight; 
 }
 void blood::model(float x) {
@@ -196,16 +195,16 @@ void blood::model(float x, bool y) {
 
     switch (dosageType) {
     case 1:
-        minEffect = 1 / weight;
-        minToxic = 2 / weight;
+        minEffect = 1;
+        minToxic = 2;
         break;
     case 2:
-        minEffect = 2 / weight;
-        minToxic = 20 / weight;
+        minEffect = 2;
+        minToxic = 20;
         break;
     case 3:
-        minEffect = 20 / weight;
-        minToxic = 50 / weight;
+        minEffect = 20;
+        minToxic = 50;
         break;
     default:
         std::cout << "\n\nError in model function of blood class. \n\n";
@@ -249,9 +248,9 @@ void fentanylCitrate(blood& model) {
 int main () {
     blood a;
     fentanylCitrate(a);
-    a.setInitialDosage(30);
+    a.setInitialDosage(3000);
     a.setWeight(60);
-    a.setDesiredConcentration(30/60);
+    a.setDesiredConcentration(300/60);
     a.setDosageType(3);
 
     a.model(24, 1);
