@@ -111,7 +111,7 @@ void reaction::model(float time, float delt) { //The amount of time we want to m
     pro.open("enzymeModel_Product.txt");
     enz.open("enzymeModel_Enzyme.txt");
 
-    for (int t; t <= time; t+= delt) {
+    for (int t = 0; t <= time; t += delt) {
         complexStorage = enzymeComplex; 
         substrateStorage = substrate;
         productStorage = product;
@@ -122,10 +122,10 @@ void reaction::model(float time, float delt) { //The amount of time we want to m
         pro << product;
         enz << enzyme;
 
-        substrate = (k2 * complexStorage) - (k1 * enzymeStorage * substrateStorage);
-        product = (k3 * complexStorage) - (k4 * enzymeStorage * productStorage);
-        enzyme = ((k2 + k3) * complexStorage) -(k1 * enzymeStorage * substrateStorage) - (k4 * enzymeStorage * productStorage);
-        enzymeComplex = (k1 * enzymeStorage * substrateStorage) + (k4 * enzymeStorage * productStorage) - ((k2 + k3) * complexStorage);
+        substrate += (k2 * complexStorage) - (k1 * enzymeStorage * substrateStorage);
+        product += (k3 * complexStorage) - (k4 * enzymeStorage * productStorage);
+        enzyme += ((k2 + k3) * complexStorage) -(k1 * enzymeStorage * substrateStorage) - (k4 * enzymeStorage * productStorage);
+        enzymeComplex += (k1 * enzymeStorage * substrateStorage) + (k4 * enzymeStorage * productStorage) - ((k2 + k3) * complexStorage);
 
     }
 

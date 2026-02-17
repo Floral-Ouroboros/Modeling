@@ -251,7 +251,7 @@ int main () {
     a.setInitialDosage(3000);
     a.setWeight(60);
     a.setDesiredConcentration(300/60);
-    a.setDosageType(3);
+    a.setDosageType(1);
 
     a.model(24, 1);
     return 0; 
