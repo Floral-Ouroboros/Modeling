@@ -58,19 +58,19 @@ void reaction::setEnzymeComplex(float x) {
     enzymeComplex = x;
 }
 void reaction::setProduct(float x) {
-    product = 0;
+    product = x;
 }
 void reaction::setK1(float x) {
-    k1 = 0;
+    k1 = x;
 }
 void reaction::setK2(float x) {
-    k2 = 0;
+    k2 = x;
 }
 void reaction::setK3(float x) {
-    k3 = 0;
+    k3 = x;
 }
 void reaction::setK4(float x) {
-    k4 = 0;
+    k4 = x;
 }
 //Getters:
 float reaction::getSubstrate() {
@@ -111,16 +111,16 @@ void reaction::model(float time, float delt) { //The amount of time we want to m
     pro.open("enzymeModel_Product.txt");
     enz.open("enzymeModel_Enzyme.txt");
 
-    for (int t = 0; t <= time; t += delt) {
+    for (float t = 0; t <= time; t += delt) {
         complexStorage = enzymeComplex; 
         substrateStorage = substrate;
         productStorage = product;
         enzymeStorage = enzyme;
 
-        sub << substrate;
-        com << enzymeComplex;
-        pro << product;
-        enz << enzyme;
+        sub << substrate << std::endl;
+        com << enzymeComplex << std::endl;
+        pro << product << std::endl;
+        enz << enzyme << std::endl;
 
         substrate += (k2 * complexStorage) - (k1 * enzymeStorage * substrateStorage);
         product += (k3 * complexStorage) - (k4 * enzymeStorage * productStorage);

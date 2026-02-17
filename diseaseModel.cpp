@@ -145,7 +145,7 @@ void disease::model(float x) {
 
 int main() {
     disease x;
-    x.setSusceptible(762);
+    x.setSusceptible(800);
     x.setTransmissionConstant(0.00218);
     x.setInfected(1);
     x.setDays(2);
