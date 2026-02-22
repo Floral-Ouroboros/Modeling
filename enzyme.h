@@ -15,6 +15,7 @@ class reaction {
     public:
         //Constructors:
         reaction();
+
         //Setters:
         void setSubstrate(float x); 
         void setEnzyme(float x); 
@@ -24,6 +25,7 @@ class reaction {
         void setK2(float x); 
         void setK3(float x); 
         void setK4(float x); 
+
         //Getters:
         float getSubstrate(); 
         float getEnzyme(); 
@@ -33,8 +35,10 @@ class reaction {
         float getK2(); 
         float getK3(); 
         float getK4(); 
+
         //Utility:
         void model(float time, float delt); //The amount of time we want to model (seconds) and the timestep length
+        void model();
 };
 
 //Constructors:
@@ -48,6 +52,7 @@ reaction::reaction() {
     k3 = 0;
     k4 = 0;
 }
+
 //Setters:
 void reaction::setSubstrate(float x) {
     substrate = x;
@@ -73,6 +78,7 @@ void reaction::setK3(float x) {
 void reaction::setK4(float x) {
     k4 = x;
 }
+
 //Getters:
 float reaction::getSubstrate() {
     return substrate;
@@ -98,6 +104,7 @@ float reaction::getK3() {
 float reaction::getK4() {
     return k4;
 }
+
 //Utility:
 void reaction::model(float time, float delt) { //The amount of time we want to model (seconds) and the timestep length
     std::ofstream sub, com, pro, enz;
@@ -107,6 +114,7 @@ void reaction::model(float time, float delt) { //The amount of time we want to m
     float productStorage;
     float enzymeStorage;
 
+    //Opening the files used to log results:
     sub.open("enzymeModel_Substrate.txt");
     com.open("enzymeModel_Complex.txt");
     pro.open("enzymeModel_Product.txt");
@@ -130,8 +138,28 @@ void reaction::model(float time, float delt) { //The amount of time we want to m
 
     }
 
+    //Closing logging files:
     sub.close();
     com.close();
     pro.close();
     enz.close();
+}
+
+void reaction::model() {
+    //The vairables are so we don't change things we need for further calculation
+    float complexStorage; 
+    float substrateStorage;
+    float productStorage;
+    float enzymeStorage;
+
+    complexStorage = enzymeComplex; 
+    substrateStorage = substrate;
+    productStorage = product;
+    enzymeStorage = enzyme;
+
+    //Calculation:
+    substrate += (k2 * complexStorage) - (k1 * enzymeStorage * substrateStorage);
+    product += (k3 * complexStorage) - (k4 * enzymeStorage * productStorage);
+    enzyme += ((k2 + k3) * complexStorage) -(k1 * enzymeStorage * substrateStorage) - (k4 * enzymeStorage * productStorage);
+    enzymeComplex += (k1 * enzymeStorage * substrateStorage) + (k4 * enzymeStorage * productStorage) - ((k2 + k3) * complexStorage);
 }
