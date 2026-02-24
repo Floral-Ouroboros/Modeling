@@ -39,6 +39,7 @@ class reaction {
         //Utility:
         void model(float time, float delt); //The amount of time we want to model (seconds) and the timestep length
         void model();
+        void model(float competition);
 };
 
 //Constructors:
