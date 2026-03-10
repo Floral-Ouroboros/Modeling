@@ -1,25 +1,25 @@
 #include <iostream>
 #include <cmath>
 
-float euler = 2.71828;
+double euler = 2.71828;
 
 class blood {
     private:
-        float weight; //Patient's weight measured in kilograms
-        float initialDosage;//Measured in mcg
-        float currentDosage; //Measured in mcg
-        float concentration; //Meaured in mcg/kg
-        float desiredConcentration; //Meaured in mcg/kg
-        float halfLife; //Measured in hrs
-        float k; //The const. of proportionality used to model the exponential decay of drug
+        double weight; //Patient's weight measured in kilograms
+        double initialDosage;//Measured in mcg
+        double currentDosage; //Measured in mcg
+        double concentration; //Meaured in mcg/kg
+        double desiredConcentration; //Meaured in mcg/kg
+        double halfLife; //Measured in hrs
+        double k; //The const. of proportionality used to model the exponential decay of drug
 
-        float minEffect; //The minimum effective concentration varies for each dosage type 
+        double minEffect; //The minimum effective concentration varies for each dosage type 
         // Assumptions for each dosage type:
         //Low = 1 mcg/kg
         //Mod. = 2 mcg/kg
         //high = 20 mcg/kg
 
-        float minToxic; //The minimum effective concentration varies for each dosage type
+        double minToxic; //The minimum effective concentration varies for each dosage type
         // Assumptions for each dosage type:
         //Low = 2 mcg/kg
         //Mod. = 20 mcg/kg
@@ -31,35 +31,35 @@ class blood {
         blood();
 
         //Getters:
-        float getWeight(); 
-        float getInitialDosage();
-        float getCurrentDosage(); 
-        float getConcentration();
-        float getDesiredConcentration(); 
-        float getHalfLife();
-        float getK();
-        float getMinEffect();
-        float getMinToxic();
+        double getWeight(); 
+        double getInitialDosage();
+        double getCurrentDosage(); 
+        double getConcentration();
+        double getDesiredConcentration(); 
+        double getHalfLife();
+        double getK();
+        double getMinEffect();
+        double getMinToxic();
         int getDosageType();
 
         //Setters:
-        void setWeight(float x); 
-        void setInitialDosage(float x);
-        void setCurrentDosage(float x); 
-        void setConcentration(float x);
-        void setDesiredConcentration(float x);
-        void setHalfLife(float x);
-        void setK(float x);
-        void setMinEffect(float x);
-        void setMinToxic(float x);
+        void setWeight(double x); 
+        void setInitialDosage(double x);
+        void setCurrentDosage(double x); 
+        void setConcentration(double x);
+        void setDesiredConcentration(double x);
+        void setHalfLife(double x);
+        void setK(double x);
+        void setMinEffect(double x);
+        void setMinToxic(double x);
         void setDosageType(int x);
 
         //Utility:
-        void degrade(float time); //Calculates to a specific time step of degradation (Accepts time in hrs)
-        void model(float x); //Performs multiple degradations to create a table of concentration (Accepts hrs to be modeled)
-        void model(float x, bool y); //Performs degradations without loading anymore drug (Accepts hrs to be modeled)
-        void dose(float x); //Accepts an amount in micrograms administered to a patient
-        void print(float time);
+        void degrade(double time); //Calculates to a specific time step of degradation (Accepts time in hrs)
+        void model(double x); //Performs multiple degradations to create a table of concentration (Accepts hrs to be modeled)
+        void model(double x, bool y); //Performs degradations without loading anymore drug (Accepts hrs to be modeled)
+        void dose(double x); //Accepts an amount in micrograms administered to a patient
+        void print(double time);
 
 };
 
@@ -78,31 +78,31 @@ blood::blood () {
 }
 
 //Getters:
-float blood::getWeight() {
+double blood::getWeight() {
     return weight;
 }
-float blood::getInitialDosage() {
+double blood::getInitialDosage() {
     return initialDosage;
 }
-float blood::getCurrentDosage() {
+double blood::getCurrentDosage() {
     return currentDosage;
 }
-float blood::getConcentration() {
+double blood::getConcentration() {
     return concentration;
 }
-float blood::getDesiredConcentration() {
+double blood::getDesiredConcentration() {
     return desiredConcentration;
 }
-float blood::getHalfLife() {
+double blood::getHalfLife() {
     return halfLife;
 }
-float blood::getK() {
+double blood::getK() {
     return k;
 }
-float blood::getMinEffect() {
+double blood::getMinEffect() {
     return minEffect;
 }
-float blood::getMinToxic() {
+double blood::getMinToxic() {
     return minToxic;
 }
 int blood::getDosageType() {
@@ -110,48 +110,48 @@ int blood::getDosageType() {
 }
 
 //Setters:
-void blood::setWeight(float x) {
+void blood::setWeight(double x) {
     weight = x;
 }
-void blood::setInitialDosage(float x) {
+void blood::setInitialDosage(double x) {
     initialDosage = x;
 }
-void blood::setCurrentDosage(float x) {
+void blood::setCurrentDosage(double x) {
     currentDosage = x;
 }
-void blood::setConcentration(float x) {
+void blood::setConcentration(double x) {
     concentration = x;
 }
-void blood::setDesiredConcentration(float x) {
+void blood::setDesiredConcentration(double x) {
     desiredConcentration = x;
 }
-void blood::setHalfLife(float x) {
+void blood::setHalfLife(double x) {
     halfLife = x;
 }
-void blood::setK(float x) {
+void blood::setK(double x) {
     k = x;
 }
-void blood::setMinEffect(float x) {
+void blood::setMinEffect(double x) {
     minEffect = x;
 }
-void blood::setMinToxic(float x) {
+void blood::setMinToxic(double x) {
     minToxic = x;
 }
 void blood::setDosageType(int x) {
     dosageType = x; 
 }
 //Utility:
-void blood::degrade (float time) {
+void blood::degrade (double time) {
     if (k == 0) {
         k = -log(0.5) / halfLife;
     }
     currentDosage = initialDosage * pow(euler, (-k*time)); //Q = Q_0 * e^(-K * time)
     concentration = currentDosage / weight; 
 }
-void blood::model(float x) {
-    float maintenenceDose; //Should I include this in the class? ? ?
-    float increment = 1;
-    float time = increment;
+void blood::model(double x) {
+    double maintenenceDose; //Should I include this in the class? ? ?
+    double increment = 1;
+    double time = increment;
 
     switch (dosageType) {
     case 1:
@@ -171,7 +171,7 @@ void blood::model(float x) {
         break;
     }
 
-    for (float count = 1; count <= x; count += increment) {
+    for (double count = 1; count <= x; count += increment) {
         degrade(time);
         if (concentration <= minEffect && concentration < minToxic) {
             std::cout << "Dosing\n\n";
@@ -189,9 +189,9 @@ void blood::model(float x) {
         
     }
 }
-void blood::model(float x, bool y) {
-    float increment = 1;
-    float time = increment;
+void blood::model(double x, bool y) {
+    double increment = 1;
+    double time = increment;
 
     switch (dosageType) {
     case 1:
@@ -211,7 +211,7 @@ void blood::model(float x, bool y) {
         break;
     }
 
-    for (float count = 1; count <= x; count += increment) {
+    for (double count = 1; count <= x; count += increment) {
         if (concentration > minToxic) {
             std::cout << minToxic << std::endl << "Too Toxic! ! !";
             return;  //If after degradation the amount of drug is over the limit then stop modelling
@@ -222,10 +222,10 @@ void blood::model(float x, bool y) {
         print(count);
     }
 }
-void blood::dose(float x) {
+void blood::dose(double x) {
     initialDosage = currentDosage + x;
 }
-void blood::print(float time) {
+void blood::print(double time) {
     std::cout << "Hour: " << time << std::endl;
     std::cout << "Current concentration: " << concentration  << " mcg/kg" << std::endl << std::endl;
 }

@@ -4,44 +4,44 @@
 
 // * * * * * NOT WORKING CODE * * * * *
 
-float pi = 3.14159;
-float grav = 9.81;
-float delT = 0.01;
+double pi = 3.14159;
+double grav = 9.81;
+double delT = 0.01;
 
 class pendulum {
     private:
-        float bobMass; //measured in grams
-        float bobWeight; //measured in grams
-        float stringLength; //measured in m
-        float force; //measured in newtons
-        float bobAngle; //measured in radians
-        float angularAcceleration; //measured in radians
-        float angularVelocity; //measured in radians
+        double bobMass; //measured in grams
+        double bobWeight; //measured in grams
+        double stringLength; //measured in m
+        double force; //measured in newtons
+        double bobAngle; //measured in radians
+        double angularAcceleration; //measured in radians
+        double angularVelocity; //measured in radians
     public:
         //Constructors:
             pendulum();
         //Setters:
-            void setBobMass(float x);
-            void setBobWeight(float x);
-            void setStringLength(float x);
-            void setForce(float x);
-            void setBobAngle(float x);
-            void setAngularAcceleration(float x);
-            void setAngularVelocity(float x);
+            void setBobMass(double x);
+            void setBobWeight(double x);
+            void setStringLength(double x);
+            void setForce(double x);
+            void setBobAngle(double x);
+            void setAngularAcceleration(double x);
+            void setAngularVelocity(double x);
         //Getters:
-            float getBobMass();
-            float getBobWeight();
-            float getStringLength();
-            float getForce();
-            float getBobAngle();
-            float getAngularAcceleration();
-            float getAngularVelocity();
+            double getBobMass();
+            double getBobWeight();
+            double getStringLength();
+            double getForce();
+            double getBobAngle();
+            double getAngularAcceleration();
+            double getAngularVelocity();
         //Utility:
             void calculateBobWeight();
             void calculateAngularAcceleration();
             void calculateForce();
             void print();
-            void model(float runTime); //runTime is measured in sec and the duration of modelling
+            void model(double runTime); //runTime is measured in sec and the duration of modelling
 };
 
 //Constructors:
@@ -56,48 +56,48 @@ pendulum::pendulum() {
 }
 
 //Setters:
-void pendulum::setBobMass(float x) {
+void pendulum::setBobMass(double x) {
     bobMass = x;
 }
-void pendulum::setBobWeight(float x) {
+void pendulum::setBobWeight(double x) {
     bobWeight = x;
 }
-void pendulum::setStringLength(float x) {
+void pendulum::setStringLength(double x) {
     stringLength = x;
 }
-void pendulum::setForce(float x) {
+void pendulum::setForce(double x) {
     force = x;
 }
-void pendulum::setBobAngle(float x) {
+void pendulum::setBobAngle(double x) {
     bobAngle = x;
 }
-void pendulum::setAngularAcceleration(float x) {
+void pendulum::setAngularAcceleration(double x) {
     angularAcceleration = x;
 }
-void pendulum::setAngularVelocity(float x) {
+void pendulum::setAngularVelocity(double x) {
     angularVelocity = x;
 }
 
 //Getters:
-float pendulum::getBobMass() {
+double pendulum::getBobMass() {
     return bobMass;
 }
-float pendulum::getBobWeight() {
+double pendulum::getBobWeight() {
     return bobWeight;
 }
-float pendulum::getStringLength() {
+double pendulum::getStringLength() {
     return stringLength;
 }
-float pendulum::getForce() {
+double pendulum::getForce() {
     return force;
 }
-float pendulum::getBobAngle() {
+double pendulum::getBobAngle() {
     return bobAngle;
 }
-float pendulum::getAngularAcceleration() {
+double pendulum::getAngularAcceleration() {
     return angularAcceleration;
 }
-float pendulum::getAngularVelocity() {
+double pendulum::getAngularVelocity() {
     return angularVelocity;
 }
 
@@ -114,11 +114,11 @@ void pendulum::calculateAngularAcceleration() {
 void pendulum::print() {
     std::cout << angularAcceleration << std::endl;
 }
-void pendulum::model(float runTime) {
+void pendulum::model(double runTime) {
     std::ofstream data;
     data.open("pendulumData.txt");
 
-    for (float time = 0; time <= runTime; time += delT) {
+    for (double time = 0; time <= runTime; time += delT) {
         calculateAngularAcceleration();
         angularVelocity +=  delT / angularAcceleration;
         bobAngle += angularVelocity;
