@@ -144,6 +144,8 @@ class dysonComponent {
         if (location.x < 0) {
             location.x = boardSize - 1 ;
         }
+        board[x.x][x.y].dyson -=1;
+        board[location.x][location.y].dyson += 1;
     }
     void dysonComponent::thrust(bool up) {
         Position x;
@@ -160,6 +162,8 @@ class dysonComponent {
         if (location.y > boardSize) {
             location.x = 0 ;
         }
+        board[x.x][x.y].dyson -=1;
+        board[location.x][location.y].dyson += 1;
     }
     void dysonComponent::run() {
         bool obstructionDetected = false; //If the probe has found an obstruction, this will be true
@@ -167,16 +171,18 @@ class dysonComponent {
         for (int cx = 1; cx <= sensorRange; cx++) {
             if (board[location.x - cx][location.y].obstruction) { //If obstructed in front within range
                 obstructionDetected = true; //Record obstruction
-                for (int cy = 1; cy <= sensorRange; cx++) { // Then check surrounding tiles
-                    if (board[location.x - cx][location.y - cy].obstruction) { //Check if above is obstructed (once)
-                        if (board[location.x - cx][location.y - cy].obstruction) { //If so, check if below is obstructed (once)
-                            //If so, move in a random direction:
-                            srand(time(0)); 
-                            if (rand() % 2 == 1) {
-                                direction = 1;
-                            }
-                            else {
-                                direction = -1;
+                for (int cy = 1; cy <= sensorRange; cy++) { // Then check surrounding tiles
+                    if ((location.y - cx < 0) && (location.x - cx < 0)) { //Check if above is obstructed (once)
+                        if (board[location.x - cx][location.y - cy].obstruction) {
+                            if ((location.y - cx < 0) && (location.x - cx < 0) && board[location.x - cx][location.y - cy].obstruction) { //If so, check if below is obstructed (once)
+                                //If so, move in a random direction:
+                                srand(time(0)); 
+                                if (rand() % 2 == 1) {
+                                    direction = 1;
+                                }
+                                else {
+                                    direction = -1;
+                                }
                             }
                         }
                         else{ //If below isn't obstructed, then tell component to go down
@@ -253,6 +259,10 @@ class Sun {
         int getObstructionSize();
 
         //Utilities:
+        void generateComponent(int x, int y, double size); // Creates a new dyson component
+        void deleteComponent(int x, int y); // Deletes a dyson components
+        void converge(); //Adds two components together
+        void split(); //Splits a component into two
         void eruptRandom();
         void print();
         void update();
@@ -289,6 +299,36 @@ class Sun {
     }
 
 //Utilities:
+    void Sun::generateComponent(int x, int y, double size) {
+        dysonComponent placeholder;
+
+        placeholder.setSize(size);
+        placeholder.setLocation(x, y);
+        swarm.push_back(placeholder);
+        board[x][y].dyson += 1; 
+    }
+    void Sun::deleteComponent(int x, int y) {
+        Position location;
+        bool completion = false;
+        for (int i = 0; i < swarm.size(); i++) {
+            location = swarm[i].getLocation();
+            if (location.x == x && location.y == y) {
+                board[x][y].dyson -= 1; 
+                swarm.erase(swarm.begin() + i);
+                completion = true;
+                return;
+            }
+        }
+        if (!completion) {
+            std::cout << "Could not find the component attempting to be deleted. ";
+        }
+    }
+    void Sun::converge() {
+
+    }
+    void Sun::split() {
+
+    }
     void Sun::eruptRandom() {
         int dx, dy;
         srand(time(0));
@@ -304,7 +344,7 @@ class Sun {
         }
 
         //Obstructes spaces within obstruction range:
-        for (int i = 0; i < (sqrt(obstructionSize) - 1); i++) { 
+        for (int i = 0; i <= (sqrt(obstructionSize) - 1); i++) { 
             board[dx - i][dy - i].obstruction = true;
             board[dx - i][dy].obstruction = true; 
             board[dx][dy - i].obstruction = true;
@@ -314,33 +354,82 @@ class Sun {
         }
     }
     void Sun::print() {
-        for (int dy = 0; dy < boardSize; dy++) {
-            for (int dx = 0; dx < boardSize; dx++) {
-                switch (board[dx][dy].obstruction) {
-                    case true:
-                        std::cout << '*';
-                        break;
-                    case false:
-                        if (board[dx][dy].dyson == 0) {
-                            std::cout << ' ';
-                        }
-                        if (board[dx][dy].dyson > 0) {
-                            std::cout << '#';
-                        }
-                        break;
+        for (int dy = -1; dy <= boardSize; dy++) {
+            for (int dx = -1; dx <= boardSize; dx++) {
+                if (dx != -1 && dx != boardSize && dy != boardSize && dy != -1) {
+                    switch (board[dx][dy].obstruction) {
+                        case true:
+                            std::cout << '*';
+                            break;
+                        case false:
+                            if (board[dx][dy].dyson == 0) {
+                                std::cout << ' ';
+                            }
+                            if (board[dx][dy].dyson > 0) {
+                                std::cout << '#';
+                            }
+                            break;
+                    }
                 }
-
-                std::cout << std::endl;
+                else {
+                    std::cout << '@';
+                }
             }
+            std::cout << std::endl;
         }
     }
     void Sun::update() {
-        srand(time(0));
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
+                if (board[x][y].obstruction) {
+                    board[x][y].timeUntilClear -= 1;
+                }
+            }
+        }
 
+        srand(time(0));
         if ((rand() % 100) + 1 <= volatility) { //Random chance for eruption to occur
             eruptRandom(); // Erupt if chance triggers
         }
+        
+        for (int i = 0; i < swarm.size(); i++) {
+            swarm[i].run(); //Includes movement and death checks
 
+            //If a component is dead, then delete it:
+            switch(swarm[i].getAlive()) {
+                case true:
+                    break;
+                case false:
+                    deleteComponent(swarm[i].getLocation().x, swarm[i].getLocation().y);
+                    break;
+            }
+
+            //Handling splits and convergences
+            Position x;
+            float size = 0;
+            switch (swarm[i].getSplit()) {
+                case -1:
+                    //Converge
+                    x = swarm[i].getLocation();
+                    size += swarm[i].getSize();
+
+                    for (int check = i; check < swarm.size(); check++) {
+                        if (x.x == swarm[check].getLocation().x && x.y == swarm[check].getLocation().y) {
+                            size += swarm[check].getSize();
+                        }
+                    }
+                    deleteComponent(x.x, x.y);
+                    generateComponent(x.x, x.y, size);
+                    break;
+                case 0:
+                    //Nothing happens
+                    break;
+                case 1:
+                    //Split
+                    break;
+            }
+        }
+        
     }
 
 //   //   //   Main Function   //   //   //
@@ -349,9 +438,17 @@ int main() {
     Sun a;
     a.setVolatility(100);
 
-    a.update();
-    a.update();
-    a.print();
+    // a.update();
+    // a.update();
+
+    for (int i = 0; i < 1; i) {
+        system("cls");
+        a.generateComponent(1, 1, 100);
+        a.update();
+        a.print();
+        Sleep(100);
+    }
+
 
     return 0;
 }
